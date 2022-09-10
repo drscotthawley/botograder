@@ -20,12 +20,13 @@ pip install pydrive2 jupytext
 ```
 
 ## Instructions:
-1. Make yourself an authenticated Google Drive API app: First setup Google credentials for PyDrive2 usage: cf. https://docs.iterative.ai/PyDrive2/quickstart/ -- **this is nontrivial and the bulk of the work is getting everything correct**. 
-Replace the `settings.yaml` and `credentials.json` files with your own, as per PyDrive2 Quckstart doc.   Run the `python quickstart.py` provided in the PyDrive2 doc. 
+1. Make yourself an authenticated Google Drive API app: First set up Google credentials for PyDrive2 usage: cf. https://docs.iterative.ai/PyDrive2/quickstart/ -- **this is nontrivial and the bulk of the work is getting everything correct**. 
 
-2. Set up the assignment: Create a directory like `examples/assignment_2/`. Therein place your `imports.py` and `tests.py` for that assignment. Student code in the form of classes and functions ("`def`") will get sandwiched between those files you provide. 
+2. Replace the `settings.yaml` and `credentials.json` files with your own, as per PyDrive2 Quckstart doc.   Run the `python quickstart.py` provided in the PyDrive2 doc. 
 
-3. Limit who's in your course (to avoid spam/spamming): Replace `valid_emails` with a list of your own students' emails.
+3. Set up the assignment: Create a directory like `examples/assignment_2/`. Therein place your `imports.py` and `tests.py` for that assignment. Student code in the form of classes and functions ("`def`") will get sandwiched between those files you provide. 
 
-4. Let 'er rip. 
+4. Limit who's in your course (to avoid spam/spamming): Replace `valid_emails` with a list of your own students' emails.
+
+5. Let 'er rip. 
 
