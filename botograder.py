@@ -1,29 +1,6 @@
 #! /usr/bin/env python3
 """
-Author: Scott H. Hawley 
-
 Downloads and runs parts of Google Colab notebooks when they change.
-
-Requirements:
-   pip install pydrive2 jupytext
-
-Requried Files: 
-   imports.py     = where teacher's imports are specified (students aren't allowed to import)
-   tests.py       = where teacher's tests are written -- these call the students' subroutines
-   valid_emails.txt  = comma-separated list of email addresses of all students in class. 
-   settings.yaml = contains google drive oauth2 client app id & authentication secret
-                   See pydrive2 docs: https://github.com/iterative/PyDrive2
-                   Setting up a Google Drive App is nontrivial BTW ;-)
-
-Sample settings.yaml file: 
-  https://github.com/iterative/PyDrive2/blob/main/examples/Upload-and-autoconvert-to-Google-Drive-Format-Example/settings.yaml
-
-
-Instructions:
-Get Google credentials for PyDrive2 usage: cf. https://docs.iterative.ai/PyDrive2/quickstart/
-Create a directory like assignment_2/ and in there place imports.py and test.py for that assignment
-
-
 """
 
 import datetime
@@ -43,12 +20,7 @@ import re
 import argparse 
 
 # global variables to be overwritten:
-# authenticate for gdrive downloads
-print("\nAuthenticating GDrive credentials...")
-gauth = GoogleAuth()
-drive = GoogleDrive(gauth)
-print(" ...success")
-
+drive = None 
 
 def string_from_file(filename="txt_file.txt"):
     "just read a string from a text file"
@@ -287,11 +259,18 @@ if __name__=="__main__":
     args = p.parse_args()
     assignment_dir, ss_url = args.dir, args.url
 
+
     # just so students don't have me emailing random people! ;-)
     emails_filename = f"valid_emails.txt"
     valid_emails = string_from_file(emails_filename).replace(' ','').split(',')
     print("valid_emails = ",valid_emails)
 
+    # authenticate for gdrive downloads
+    print("\nAuthenticating GDrive credentials...")
+    gauth = GoogleAuth()
+    drive = GoogleDrive(gauth)
+    print(" ...success")
+    
     ## Update local copy of Google Forms spreadsheet
     ss_file = 'responses.csv' # file that Google Forms spreadsheet values will be saved to
     print("\nChecking Google Forms spreadsheet for changes")
