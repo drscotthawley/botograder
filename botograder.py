@@ -143,7 +143,7 @@ def grab_top_lev(pyfile, dir, debug=False, stop_after='token_to_one_hot', import
     Ignore any other text --  esp. as it might generate syntax / IndentationError we don't care about
     """
     out_text = ''
-    rec_start_cue = 'GRADED EXERCISE'
+    rec_start_cue = ' GRADED EXERCISE'  # leading space is there to differentiate from "UNGRADED EXERCISE"
     block_name_cues = ['def','class']  # these all have to start in column 1
     also_allowed = ['nltk.']  # these all have to start in column 1
 
@@ -255,7 +255,6 @@ if __name__=="__main__":
     p.add_argument('--noemail','-n',action='store_true', help="don't email students")
     args = p.parse_args()
     assignment_dir, ss_url = args.dir, args.url
-
 
     # just so students don't have me emailing random people! ;-)
     emails_filename = f"valid_emails.txt"
