@@ -9,20 +9,22 @@ Downloads and runs parts of Google Colab notebooks when they change.
 pip install pydrive2 jupytext
 ```
 
-## Instructions:
-First setup Google credentials for PyDrive2 usage: cf. https://docs.iterative.ai/PyDrive2/quickstart/ -- **this is nontrivial and the bulk of the work is getting everything correct**. 
-
-Create a directory like assignment_2/ and in there place imports.py and test.py for that assignment...
-
 ## Requried Files: 
    imports.py     = where teacher's imports are specified (students aren't allowed to import)
    tests.py       = where teacher's tests are written -- these call the students' subroutines
    valid_emails.txt  = comma-separated list of email addresses of all students in class. 
    settings.yaml = contains google drive oauth2 client app id & authentication secret
-                   See pydrive2 docs: https://github.com/iterative/PyDrive2
-                   Setting up a Google Drive App is nontrivial BTW ;-)
+        Sample settings.yaml file: 
+        https://github.com/iterative/PyDrive2/blob/main/examples/Upload-and-autoconvert-to-Google-Drive-Format-Example/settings.yaml
 
-Sample settings.yaml file: 
-  https://github.com/iterative/PyDrive2/blob/main/examples/Upload-and-autoconvert-to-Google-Drive-Format-Example/settings.yaml
 
+## Instructions:
+1. Make yourself an authenticated Google Drive API app: First setup Google credentials for PyDrive2 usage: cf. https://docs.iterative.ai/PyDrive2/quickstart/ -- **this is nontrivial and the bulk of the work is getting everything correct**. 
+Replace the `settings.yaml` and `credentials.json` files with your own, as per PyDrive2 Quckstart doc.   Run the `python quickstart.py` provided in the PyDrive2 doc. 
+
+2. Set up the assignment: Create a directory like `examples/assignment_2/`. Therein place your `imports.py` and `tests.py` for that assignment. Student code in the form of classes and functions ("`def`") will get sandwiched between those files you provide. 
+
+3. Limit who's in your course (to avoid spam/spamming): Replace `valid_emails` with a list of your own students' emails.
+
+4. Let 'er rip. 
 
