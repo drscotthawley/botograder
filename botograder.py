@@ -92,7 +92,6 @@ def run_cmd(cmd, log=False, restricted=True):
 def download_if_newer_gdrive(url, dst_file, force_download=False, date_key='modifiedDate', colab=False):
     """
     downloads a file from url if it's newer than dst_file stored on local disk. 
-    Uses 'grabcolab' if getting a colab notebook, otherwise uses wget for general files
     """
     updated = False
 
@@ -105,11 +104,11 @@ def download_if_newer_gdrive(url, dst_file, force_download=False, date_key='modi
 
     if (force_download) or (url_date > file_date):
         print(f"Downloading new version of {dst_file}")
+        wget_useragent_str = 'wget -q -U "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"'
         if colab:
-            #url = 'https://docs.google.com/uc?export=download&id='+url_to_id(url)  # not working not sure why
-            cmd = f". ~/.bash_aliases && grabcolab {url} && mv colab.ipynb {dst_file}"
-        else:
-            cmd = f"rm -f {dst_file}; wget -q -U 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)' -O {dst_file} {url}"
+            url = f"https://docs.google.com/uc?export=download&id={url_to_id(url)}"
+        cmd = f"rm -f {dst_file}; {wget_useragent_str} -O {dst_file} {url}"
+        print("\ncmd = ",cmd)
         run_cmd(cmd)
         updated = True
     else:
