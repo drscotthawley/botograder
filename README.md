@@ -36,7 +36,7 @@ pip install pydrive2 jupytext
 ## Sample Usage:
 
 ```bash
-./botograder -n examples/assignment2 https://docs.google.com/spreadsheets/d/16S5jfbbVWj3Os2MQNe0oTH08f7u8pLEduto9x0BtNc4/edit?usp=sharing
+./botograder.py -n examples/assignment2 https://docs.google.com/spreadsheets/d/16S5jfbbVWj3Os2MQNe0oTH08f7u8pLEduto9x0BtNc4/edit?usp=sharing
 ```
 
 
