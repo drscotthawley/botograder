@@ -10,13 +10,14 @@ pip install pydrive2 jupytext
 ```
 
 ## Requried Files: 
+```
    imports.py     = where teacher's imports are specified (students aren't allowed to import)
    tests.py       = where teacher's tests are written -- these call the students' subroutines
    valid_emails.txt  = comma-separated list of email addresses of all students in class. 
    settings.yaml = contains google drive oauth2 client app id & authentication secret
         Sample settings.yaml file: 
         https://github.com/iterative/PyDrive2/blob/main/examples/Upload-and-autoconvert-to-Google-Drive-Format-Example/settings.yaml
-
+```
 
 ## Instructions:
 1. Make yourself an authenticated Google Drive API app: First setup Google credentials for PyDrive2 usage: cf. https://docs.iterative.ai/PyDrive2/quickstart/ -- **this is nontrivial and the bulk of the work is getting everything correct**. 
