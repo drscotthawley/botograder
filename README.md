@@ -31,7 +31,7 @@ pip install pydrive2 jupytext
 5. Create a Google Form for the Assignment whereby students can provide their names, emails, and "sharing links" to their Colab notebooks.   Sample form: https://forms.gle/udBpUpHifdAwLmU96
 
 
-6. Generate a Google Sheets...shet from that form, and supply the sharing URL to *that* (e.g. https://docs.google.com/spreadsheets/d/16S5jfbbVWj3Os2MQNe0oTH08f7u8pLEduto9x0BtNc4/edit?usp=sharing) into botograder
+6. Generate a Google Sheet from that form, and supply the sharing URL to *that* (e.g. https://docs.google.com/spreadsheets/d/16S5jfbbVWj3Os2MQNe0oTH08f7u8pLEduto9x0BtNc4/edit?usp=sharing) into botograder
 
 ## Sample Usage:
 
