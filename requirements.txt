@@ -1,0 +1,2 @@
+pydrive2
+jupytext
