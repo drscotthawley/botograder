@@ -1,5 +1,5 @@
-
-# instructor-supplied tests. each takes no arguments, each one contains an assert
+# Example instructor-supplied tests: test1(), test2(), test3() 
+# Each takes no arguments, each one contains an assert.
 
 x2 = torch.tensor([[1,2,3],[4,5,6]]).float()  # some inputs to use for the tests
 batch_size, in_dim = x2.shape[0], x2.shape[1]; 
