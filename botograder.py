@@ -89,7 +89,7 @@ def run_cmd(cmd, log=False, restricted=True):
     return subprocess.getoutput(cmd)
 
 
-def download_if_newer_gdrive(url, dst_file, force_download=True, date_key='modifiedDate', colab=False):
+def download_if_newer_gdrive(url, dst_file, force_download=False, date_key='modifiedDate', colab=False):
     """
     downloads a file from url if it's newer than dst_file stored on local disk. 
     Uses 'grabcolab' if getting a colab notebook, otherwise uses wget for general files
