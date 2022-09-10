@@ -106,7 +106,8 @@ def download_if_newer_gdrive(url, dst_file, force_download=False, date_key='modi
         print(f"Downloading new version of {dst_file}")
         wget_useragent_str = 'wget -q -U "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"'
         if colab:
-            url = f"https://docs.google.com/uc?export=download&id={url_to_id(url)}"
+            ### "wget -q -U "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)" -O examples/assignment_2/B00000000_Scott_Hawley.ipynb  'https://docs.google.com/uc?export=download&id=16-zOEoHEtLO8k_Nm8YytHIGsTdao2yrz'"
+            url = f"'https://docs.google.com/uc?export=download&id={url_to_id(url)}'"
         cmd = f"rm -f {dst_file}; {wget_useragent_str} -O {dst_file} {url}"
         print("\ncmd = ",cmd)
         run_cmd(cmd)
@@ -114,7 +115,6 @@ def download_if_newer_gdrive(url, dst_file, force_download=False, date_key='modi
     else:
         pass #print(f"We already have the latest version of {dst_file}.")
 
-    #print("download_if_newer_gdrive: Returning")
     return updated
 
 
