@@ -249,9 +249,6 @@ def update_and_run_nb(row, assignment_dir="assigment_N", noemail=False, valid_em
 
 if __name__=="__main__":
 
-    from pydrive2.drive import GoogleDrive
-
-
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     p.add_argument('dir', default="assignment_N", help='output directory')
     p.add_argument('url', default="https://sheets.google.com/blahlbahblah", help="google sheets spreadsheet url")
@@ -270,7 +267,7 @@ if __name__=="__main__":
     gauth = GoogleAuth()
     drive = GoogleDrive(gauth)
     print(" ...success")
-    
+
     ## Update local copy of Google Forms spreadsheet
     ss_file = 'responses.csv' # file that Google Forms spreadsheet values will be saved to
     print("\nChecking Google Forms spreadsheet for changes")
