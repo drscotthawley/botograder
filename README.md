@@ -6,7 +6,7 @@ Downloads and runs parts of Google Colab notebooks when they change.
 
 ## Requirements:
 ```bash
-pip install pydrive2 jupytext
+pip install pydrive2 jupytext yagmail
 ```
 
 ## Requried Files: 
@@ -33,10 +33,22 @@ pip install pydrive2 jupytext
 
 6. Generate a Google Sheet from that form, and supply the sharing URL to *that* (e.g. https://docs.google.com/spreadsheets/d/16S5jfbbVWj3Os2MQNe0oTH08f7u8pLEduto9x0BtNc4/edit?usp=sharing) into botograder
 
+...but wait...
+
+7. If you want the bot to be able to email students, you NOW (Sept 2022) need to configure a special Google Mail OAuth2 id (maybe separate from your GDrive...would love to know how to do both in one ID). So now go follow these instructions: https://developers.google.com/gmail/api/quickstart/python. Now you get to create and run a *NEW* quickstart.py file (Let's call it `quickstart2.py` just to be safe).
+
+
 ## Sample Usage:
 
 ```bash
 ./botograder.py -n examples/assignment2 https://docs.google.com/spreadsheets/d/16S5jfbbVWj3Os2MQNe0oTH08f7u8pLEduto9x0BtNc4/edit?usp=sharing
 ```
 
+## Troubleshooting
 
+* pydrive2 errors: delete (or move) `settings.yaml`
+* other Google errors: re-create new credentials
+* yagmail errors: ?? Working on it. Used to work fine, but for now: run with `-n` and diable emailing completely. 
+
+-- 
+Copyright 2021, 2022 Scott H. Hawley 

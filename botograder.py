@@ -1,9 +1,11 @@
 #! /usr/bin/env python3
 """
-Downloads and runs parts of Google Colab notebooks when they change.
+botograder.py 
+Downloads and runs sections of Google Colab notebooks when they change.
 """
 
 import datetime
+#from tkinter import TRUE
 import requests
 from dateutil.parser import parse as parsedate
 import os, sys
@@ -195,23 +197,35 @@ def clean_user_str(s:str):
     for c in escaped_chars: s = s.replace(c,'\\'+c)   # escape via backslash
     return s
 
+def remove_syntax_errors(py_file):
+    print(f"Checking for syntax errors in {py_file}")
+    cmd = f"python -m py_compile {py_file} 2>&1 >/dev/null |  grep ', line '"
+    bad_lines_list = run_cmd(cmd)
+    print("bad_lines_list = ",bad_lines_list)
+    if 'line' in bad_lines_list:
+        bad_line = int(bad_lines_list.split(' ')[-1])
+        print("bad_line = ",bad_line)
 
-def run_nb(nb_file, funcs=['count_freqs'], assignment_dir="./"): 
+
+
+def run_nb(nb_file, funcs=['count_freqs'], assignment_dir="./", student_id='', name=''): 
     """
     Run (parts of) the student's notebook using imports & tests supplied by teacher
     """
-    print(f"Converting notebook: {nb_file}")
+    cmd = f'jupytext --to py {nb_file}'
+    print(f"Converting notebook: {nb_file}\n  {cmd}")
+    run_cmd(cmd)                # convert notebook to python script
     pyfile = nb_file.replace('ipynb','py')
     student_parts = f'{assignment_dir}/student_parts.py'  # where we'll save the grabbed parts of the student's file
-    run_cmd(f'jupytext --to py {nb_file}')                # convert notebook to python script
     nb_py_text = grab_top_lev(pyfile, assignment_dir)     # grab the relevant parts of the student's code
     with open(student_parts, 'w') as f:
         f.write(nb_py_text)                                # write that to a text file called student_parts
 
     imports = f'{assignment_dir}/imports.py'                  # where teacher's predefined imports lie
     tests = f'{assignment_dir}/tests.py'                      # where teacher's tests are written
-    tester_file = f"{assignment_dir}/test_assignment.py"      # the complete file that we'll be running
+    tester_file = f"{assignment_dir}/{student_id}_{name.replace(' ','_')}_run_assignment.py"      # the complete file that we'll be running
     run_cmd(f"cat {imports} {student_parts} {tests} > {tester_file}")  # assemble the run file
+    remove_syntax_errors(tester_file)
     print(f">>> Executing testing file: {tester_file}")
     run_log = run_cmd(f"python {tester_file}")
     run_log = f"Run log for {nb_file}:\n" + run_log
@@ -229,7 +243,7 @@ def send_email(to_addr, message, subject='DLAIE AUTOGRADER: Your results', from_
         print(f"ERROR: to_addr = {to_addr} not in list of valid emails: {valid_emails}")
 
 
-def update_and_run_nb(row, assignment_dir="assigment_N", noemail=False, valid_emails=[], force_execute=False):
+def update_and_run_nb(row, assignment_dir="assigment_N", noemail=False, valid_emails=[], force_execute=True):
     #if not os.path.exists(assignment_dir): os.mkdir(assignment_dir) 
     url, student_id, name, email = row['colab_url'],   row['student_id'].title(),  row['name'].title(), row['email'].lower()
     [url, student_id, name]  = [clean_user_str(x) for x in [url, student_id, name]]  # email isn't used in shell cmds
@@ -240,7 +254,7 @@ def update_and_run_nb(row, assignment_dir="assigment_N", noemail=False, valid_em
     if updated or force_execute:
         wait_til_file_ready(dst_file)
         print("   ....")
-        run_log = run_nb(dst_file, assignment_dir=assignment_dir)                                 # Run the notebook
+        run_log = run_nb(dst_file, assignment_dir=assignment_dir, student_id=student_id, name=name)                                 # Run the notebook
         if (not noemail) and (valid_emails != []):
             send_email(email, run_log, valid_emails=valid_emails)  # email to student
             #send_email('scott.hawley@belmont.edu', run_log, subject=f'Autograder results for {name}')
