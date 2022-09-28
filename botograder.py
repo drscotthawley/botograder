@@ -198,14 +198,23 @@ def clean_user_str(s:str):
     return s
 
 def remove_syntax_errors(py_file):
-    print(f"Checking for syntax errors in {py_file}")
-    cmd = f"python -m py_compile {py_file} 2>&1 >/dev/null |  grep ', line '"
-    bad_lines_list = run_cmd(cmd)
-    print("bad_lines_list = ",bad_lines_list)
-    if 'line' in bad_lines_list:
-        bad_line = int(bad_lines_list.split(' ')[-1])
-        print("bad_line = ",bad_line)
-
+    cmd = f"python -m py_compile {py_file}"  # 2>&1 >/dev/null |  grep ', line '"
+    precheck_str = run_cmd(cmd)
+    if precheck_str != '':
+        print("Syntax pre-check problem: ",precheck_str)
+        bad_lines = re.findall(f", line \d+",precheck_str)
+        if len(bad_lines) > 0:
+            bad_line = int(bad_lines[0].split(' ')[-1])
+            print("Removing bad line",bad_line)
+            lines = []
+            with open(py_file, 'r') as fp: # read file into list
+                lines = fp.readlines()
+            del lines[bad_line-1]          # remove bad line
+            with open(py_file, 'w') as fp: # overwrite file without bad line. 
+                fp.writelines(lines)
+            remove_syntax_errors(py_file) # recursion!
+        else:
+            print("\n\n******ERROR: Don't know how to fix this*****\n\n")
 
 
 def run_nb(nb_file, funcs=['count_freqs'], assignment_dir="./", student_id='', name=''): 
