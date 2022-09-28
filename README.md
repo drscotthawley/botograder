@@ -48,7 +48,7 @@ pip install pydrive2 jupytext yagmail
 
 * pydrive2 errors: delete (or move) `settings.yaml`
 * other Google errors: re-create new credentials
-* yagmail errors: ?? Working on it. Used to work fine, but for now: run with `-n` and diable emailing completely. 
+* yagmail errors: ?? Working on it. Used to work fine, but for now: run with `-n` and disable emailing completely. 
 
 -- 
 Copyright 2021, 2022 Scott H. Hawley 
