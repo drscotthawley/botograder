@@ -46,7 +46,7 @@ pip install pydrive2 jupytext yagmail
 
 ## Troubleshooting
 
-* pydrive2 errors: delete (or move) `settings.yaml`
+* pydrive2 errors: delete (or move) `settings.yaml`, you will now get a pop-up browser window asking you to click-to-authenticate with Google every time you run `botograder`, but hey it works
 * other Google errors: re-create new credentials
 * yagmail errors: ?? Working on it. Used to work fine, but for now: run with `-n` and disable emailing completely. 
 
