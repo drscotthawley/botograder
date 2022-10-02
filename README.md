@@ -1,5 +1,5 @@
 # botograder
-An autograder. [There are many like it but this one is mine.](https://youtu.be/Hgd2F2QNfEE?t=12)
+An autograder. [There are many like it but this one is mine.](https://youtu.be/Hgd2F2QNfEE?t=13)
 
 
 Downloads and runs parts of Google Colab notebooks when they change. (Ideally) Emails students their scores. 
