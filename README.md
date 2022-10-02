@@ -1,8 +1,8 @@
 # botograder
-An autograder. There are many like it but this one is mine
+An autograder. [There are many like it but this one is mine.](https://youtu.be/Hgd2F2QNfEE?t=12)
 
 
-Downloads and runs parts of Google Colab notebooks when they change.
+Downloads and runs parts of Google Colab notebooks when they change. (Ideally) Emails students their scores. 
 
 ## Requirements:
 ```bash
