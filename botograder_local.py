@@ -35,6 +35,52 @@ def string_from_file(filename="txt_file.txt"):
     return output
 
 
+def download_if_newer_generic(url, dst_file, force_new=False, date_key='Date'):
+    """
+    For generic, ordinary files
+    cf. https://stackoverflow.com/questions/29314287/python-requests-download-only-if-newer
+    """
+    r = requests.head(url)
+    url_date = parsedate(r.headers[date_key]).astimezone()
+    if not os.path.exists(dst_file):
+        force_new = True
+    else:
+        file_date = datetime.datetime.fromtimestamp(os.path.getmtime(dst_file)).astimezone()
+    print("url_date = ",url_date)
+    print("file_date = ",file_date)
+    if (force_new) or (url_date > file_date):
+        print(f"Downloading {dst_file} from {url}...")
+        user_agent = {"User-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0"}
+        r = requests.get(url, headers=user_agent)
+        with open(dst_file, 'wb') as fd:
+            for chunk in r.iter_content(4096):
+                fd.write(chunk)
+
+
+def url_to_id(url, split_ind=4):
+    "convert google drive file urls to file ids"
+    if 'spreadsheets' in url: split_ind = 5
+    id =  url.split('/')[split_ind]
+    id = id.replace('?usp=sharing','')
+    return id
+
+def ss_sharing_url_to_csv(url):
+    "convert spreadsheet sharing url to csv url"
+    return url.replace('edit?usp=sharing','gviz/tq?tqx=out:csv&sheet=Sheet1')
+
+def gdrive_file_date(url):
+    "get data for a file stored on gdrive"
+    id = url_to_id(url)
+    gd_file = drive.CreateFile({'id': id})
+    gd_file['modifiedDate']
+    return parsedate(gd_file['modifiedDate']).astimezone()
+
+def wait_til_file_ready(dst_file, sleep=1):
+    "sometimes it takes a little while for a local file to be created from (gdrive) download"
+    while not os.path.exists(dst_file):
+        print(f"Waiting til file {dst_file} is ready")
+        time.sleep(sleep)
+
 
 def run_cmd(cmd, log=False, restricted=True):
     "wrapper for running a unix shell command"
@@ -43,6 +89,34 @@ def run_cmd(cmd, log=False, restricted=True):
     #os.system(cmd)
     return subprocess.getoutput(cmd)
 
+
+def download_if_newer_gdrive(url, dst_file, force_download=False, date_key='modifiedDate', colab=False):
+    """
+    downloads a file from url if it's newer than dst_file stored on local disk. 
+    """
+    updated = False
+
+    url_date = gdrive_file_date(url)
+
+    if not os.path.exists(dst_file):
+        force_download = True
+    else:
+        file_date = datetime.datetime.fromtimestamp(os.path.getmtime(dst_file)).astimezone()
+
+    if (force_download) or (url_date > file_date):
+        print(f"Downloading new version of {dst_file}")
+        wget_useragent_str = 'wget -q -U "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"'
+        if colab:
+            ### "wget -q -U "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)" -O examples/assignment_2/B00000000_Scott_Hawley.ipynb  'https://docs.google.com/uc?export=download&id=16-zOEoHEtLO8k_Nm8YytHIGsTdao2yrz'"
+            url = f"'https://docs.google.com/uc?export=download&id={url_to_id(url)}'"
+        cmd = f"rm -f {dst_file}; {wget_useragent_str} -O {dst_file} {url}"
+        print("\ncmd = ",cmd)
+        run_cmd(cmd)
+        updated = True
+    else:
+        pass #print(f"We already have the latest version of {dst_file}.")
+
+    return updated
 
 
 def skip_this_line(line, allow_imports=False):
@@ -176,7 +250,7 @@ if __name__=="__main__":
     assignment_dir = args.dir
 
     ## Update & run students' Colab notebooks
-    names = ['shawley',] # ****HERE***list all student usernames in system /home/ directory 
+    names = ['shawley','amanda','caleb','claire','jaxon','joey','yosef']
     for name in names:
         print(f"\n\n=================== Beginning Run for Name: {name} ==================== ")
         orig_file = f'/home/{name}/DLAIE/Assignments/A5_GANs.ipynb'
