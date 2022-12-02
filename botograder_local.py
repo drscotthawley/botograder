@@ -250,7 +250,7 @@ if __name__=="__main__":
     assignment_dir = args.dir
 
     ## Update & run students' Colab notebooks
-    names = ['shawley','amanda','caleb','claire','jaxon','joey','yosef']
+    names = ['shawley',]# ***HERE*** add student usernames as in /home directory
     for name in names:
         print(f"\n\n=================== Beginning Run for Name: {name} ==================== ")
         orig_file = f'/home/{name}/DLAIE/Assignments/A5_GANs.ipynb'
