@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 """
 botograder_local.py 
-Runs locally, expecting all students work is in their home directories on the current system
-Doesn't email anyone, just prints to stdout
+Runs locally expecting all students work is in files on the current system
+Doesn't email anybody
 """
 
 import datetime
@@ -243,19 +243,19 @@ def run_nb(nb_file, funcs=['count_freqs'], assignment_dir="./", student_id='', n
 
 
 if __name__=="__main__":
+
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     p.add_argument('dir', default="assignment_N", help='directory to execute nbs in')
     args = p.parse_args()
     assignment_dir = args.dir
 
     ## Update & run students' Colab notebooks
-    names = ['shawley']   # and add other students usernames here
+    names = ['shawley',]# ***HERE*** add student usernames as in /home directory
     for name in names:
         print(f"\n\n=================== Beginning Run for Name: {name} ==================== ")
         orig_file = f'/home/{name}/DLAIE/Assignments/A5_GANs.ipynb'
         dst_file = f'{assignment_dir}/{name}_A5_GANs.ipynb'
-        run_user = "mchorse"  # username on our CoreWeave account
-        cmd = f"sudo cp {orig_file} {dst_file}; sudo chown {run_user} {dst_file}" # copy over from their directory
-        os.system(cmd) # TODO: not a fan of os.system but am in a bit of a hurry ATM
+        cmd = f"sudo cp {orig_file} {dst_file}; sudo chown mchorse {dst_file}"
+        os.system(cmd)
         run_log = run_nb(dst_file, assignment_dir=assignment_dir, name=name) # Run the notebook
         print(f"\n\n=================== End of Run for Name: {name} ====================\n ")
