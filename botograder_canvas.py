@@ -236,20 +236,26 @@ def parse_assignment_url(url):
 
 def is_new_submission(submission, local_filename):
     if not os.path.exists(local_filename):
+        print("No local file found. Downloading submission.")
         return True
     subdatetime = datetime.datetime.strptime(submission.submitted_at, '%Y-%m-%dT%H:%M:%SZ')
     filetimestamp = os.path.getmtime(local_filename)
     filedatetime = datetime.datetime.fromtimestamp(filetimestamp)
-    return subdatetime < filedatetime
+    result = subdatetime > filedatetime
+    #print(f"subdatetime = {subdatetime}, filedatetime = {filedatetime}, result = {result}")
+    return result
 
 
 
 if __name__=="__main__":
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument('dir', default="assignment_N", help='local directory to execute nbs in')
+    p.add_argument('-t', '--test', action='store_true', help="Test mode: don't actually submit grades/logs to Canvas")
+    p.add_argument('url', help='url pointing to assignment in Canvas')
+    p.add_argument('dir',  help='local directory to execute nbs in')
     args = p.parse_args()
+    test_mode = args.test
+    assn_url = args.url
     assignment_dir = args.dir # local directory 
-
 
     # Canvas Setup
     API_URL = "https://belmont.instructure.com"   # Canvas API URL
@@ -257,11 +263,9 @@ if __name__=="__main__":
 
     #course_id =  15626 # DLAIE, Fall 23
     #assn_url = 'https://belmont.instructure.com/courses/15626/assignments/284175' # Assignment 2, Fall2023
-    assn_url = 'https://belmont.instructure.com/courses/15626/assignments/307639' # Assignment 3, Fall2023
+    #assn_url = 'https://belmont.instructure.com/courses/15626/assignments/307639' # Assignment 3, Fall2023
 
-    #assn_id = int(assn_url.split('/')[-1])
     course_id, assn_id = parse_assignment_url(assn_url)
-
 
     canvas = Canvas(API_URL, API_KEY) # create a canvas object
     course = canvas.get_course(course_id)
@@ -308,10 +312,14 @@ if __name__=="__main__":
                 if tests_passed > 0:
                     percent = (tests_passed*1.0 / total_tests) 
                     score = percent * assignment.points_possible
-                print("Submitted a grade of Score = ",score)
-                s.edit(submission={'posted_grade':score})
-                s.upload_comment("run_log.txt")
-                print("Finished submitting grade.\n\n")
+                print("Score = ",score)
+                if not test_mode:
+                    print("Submitting grades and run log")
+                    s.edit(submission={'posted_grade':score})
+                    s.upload_comment("run_log.txt")
+                    print("Finished submitting grade.\n\n")
+                else:
+                    print("Test mode: No grade submitted")
             else:
                 print(f"Submission not updated. Filename was {outname}")
         else:
