@@ -115,7 +115,7 @@ def grab_top_lev(pyfile, dir, debug=False, stop_after='token_to_one_hot', import
     rec_start_cue = ' GRADED EXERCISE'  # leading space is there to differentiate from "UNGRADED EXERCISE"
     block_name_cues = ['def','class']  # these all have to start in column 1
     also_allowed = ['nltk.']  # these all have to start in column 1
-
+    print(f"  Trying to open file {dir+'/'+pyfile}")
     file1 = open(dir+'/'+pyfile, 'r')
     lines = file1.readlines()
     recording, already_found_stop = False, False
@@ -189,10 +189,11 @@ def run_nb(nb_file, funcs=['count_freqs'], assignment_dir="./", student_id='', n
     """
     Run (parts of) the student's notebook using imports & tests supplied by teacher
     """
-    cmd = f'jupytext --to py {assignment_dir}/{nb_file}'
+    path = f"{assignment_dir}/{nb_file}".replace(' ','\ ').replace('(','\(').replace(')','\)')
+    cmd = f'jupytext --to py {path}'
     print(f"Converting notebook: {nb_file}\n  {cmd}")
     run_cmd(cmd)                # convert notebook to python script
-    pyfile = nb_file.replace('ipynb','py')
+    pyfile = nb_file.replace('.ipynb','.py')
     student_parts = f'{assignment_dir}/student_parts.py'  # where we'll save the grabbed parts of the student's file
     nb_py_text = grab_top_lev(pyfile, assignment_dir)     # grab the relevant parts of the student's code
     with open(student_parts, 'w') as f:
@@ -242,7 +243,7 @@ def is_new_submission(submission, local_filename):
     filetimestamp = os.path.getmtime(local_filename)
     filedatetime = datetime.datetime.fromtimestamp(filetimestamp)
     result = subdatetime > filedatetime
-    #print(f"subdatetime = {subdatetime}, filedatetime = {filedatetime}, result = {result}")
+    print(f"subdatetime = {subdatetime}, filedatetime = {filedatetime}, is_new_submission = {result}")
     return result
 
 
@@ -288,8 +289,9 @@ if __name__=="__main__":
             nfiles +=1 
             #print(s.__dir__())
             thefile = s.attachments[-1]
+            thefile_name = f"{thefile}".replace(' ','').replace('(','').replace(')','') # strip bad chars
             print(f"File uploaded is {thefile}")
-            nb_file = f"a{s.assignment_id}_u{s.user_id}_{id_to[s.user_id]['name']}_{thefile}"
+            nb_file = f"a{s.assignment_id}_u{s.user_id}_{id_to[s.user_id]['name']}_{thefile_name}"
             nb_file = nb_file.replace("'","").replace("/","").replace(";","").replace("&","") # strip bad chars
             outname = assignment_dir+'/'+nb_file
             if is_new_submission(s, outname):
