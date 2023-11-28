@@ -20,6 +20,8 @@ import re
 import argparse 
 from canvasapi import Canvas, exceptions
 import datetime
+from collections import defaultdict 
+
 
 # global variables to be overwritten later
 drive = None 
@@ -247,6 +249,17 @@ def is_new_submission(submission, local_filename):
     return result
 
 
+def get_tests_passed(file_path):
+    pattern = r"(\d+)/(\d+) tests passed."
+    x, y = None, None
+    with open(file_path, 'r') as file:
+        for line in file:
+            match = re.search(pattern, line)
+            if match:
+                x, y = map(int, match.groups())
+                return x, y    
+    return x, y
+
 
 if __name__=="__main__":
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -272,8 +285,11 @@ if __name__=="__main__":
     course = canvas.get_course(course_id)
     assignment = course.get_assignment(assn_id)
     users = course.get_users(enrollment_type=['student'])
-    id_to = {36533: {"name":"Test_Student", "email":"nobody@nobody.org"}}
+    # note Test student id changes with each assignment. 
+    id_to = {}
+    id_to[37851] = {"name":"Test_Student", "email":"nobody@nobody.org"} # it was this for assn 5
     for user in users:
+        print("user = ",user)
         id_to[user.id]= {"name":user.name.replace(' ','_'), "email":user.email}
 
     # Download all the submitted files
@@ -283,7 +299,9 @@ if __name__=="__main__":
     subs = assignment.get_submissions() 
     i, nfiles = 0,0
     for s in subs:
-        #print(s.__dir__())
+        if s.user_id not in id_to.keys(): 
+            print(f"\nUser id {s.user_id} not found in id_to dict. Adding as Probably_Test_Student")
+            id_to[s.user_id] = {"name":"Probably_Test_Student", "email":"nobody@nobody.org"} 
         print(f"-----\ni={i}: {id_to[s.user_id]['name']}                   {id_to[s.user_id]['email']} ")
         if len(s.attachments) > 0:
             nfiles +=1 
@@ -308,13 +326,16 @@ if __name__=="__main__":
                 string_to_file(run_log, "run_log.txt")
 
                 # create a score
-                total_tests = run_log.count('Running test')
-                tests_passed = run_log.count('Test passed!')
+                #total_tests = run_log.count('Running test')
+                #tests_passed = run_log.count('Test passed!')
+                tests_passed, total_tests = get_tests_passed("run_log.txt")
                 score = 0
                 if tests_passed > 0:
                     percent = (tests_passed*1.0 / total_tests) 
                     score = percent * assignment.points_possible
-                print("Score = ",score)
+                    print(f"Score = {score}. = {tests_passed}/{total_tests} * ({assignment.points_possible} points possible)")
+                else: 
+                    print("No tests passed. Score = 0")
                 if not test_mode:
                     print("Submitting grades and run log")
                     s.edit(submission={'posted_grade':score})
