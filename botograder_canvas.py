@@ -242,7 +242,7 @@ def is_new_submission(submission, local_filename):
         print("No local file found. Downloading submission.")
         return True
     subdatetime = datetime.datetime.strptime(submission.submitted_at, '%Y-%m-%dT%H:%M:%SZ')
-    subdatetime = subdatetime - datetime.timedelta(hours=5) # Canvas operates in European Central time, so we need to subtract 5 hours to get to US Eastern time
+    subdatetime = subdatetime - datetime.timedelta(hours=6) # Canvas operates in European Central time, so we need to subtract for US Central time
     filetimestamp = os.path.getmtime(local_filename)
     filedatetime = datetime.datetime.fromtimestamp(filetimestamp)
     result = subdatetime > filedatetime
