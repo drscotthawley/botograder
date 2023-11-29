@@ -242,6 +242,7 @@ def is_new_submission(submission, local_filename):
         print("No local file found. Downloading submission.")
         return True
     subdatetime = datetime.datetime.strptime(submission.submitted_at, '%Y-%m-%dT%H:%M:%SZ')
+    subdatetime = subdatetime - datetime.timedelta(hours=5) # Canvas operates in European Central time, so we need to subtract 5 hours to get to US Eastern time
     filetimestamp = os.path.getmtime(local_filename)
     filedatetime = datetime.datetime.fromtimestamp(filetimestamp)
     result = subdatetime > filedatetime
@@ -289,7 +290,7 @@ if __name__=="__main__":
     id_to = {}
     id_to[37851] = {"name":"Test_Student", "email":"nobody@nobody.org"} # it was this for assn 5
     for user in users:
-        print("user = ",user)
+        #print("user = ",user)
         id_to[user.id]= {"name":user.name.replace(' ','_'), "email":user.email}
 
     # Download all the submitted files
