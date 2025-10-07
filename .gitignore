@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+CANVAS_API_KEY.txt
+.DS_Store
+log.txt
+lb_test/
