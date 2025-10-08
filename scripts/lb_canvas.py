@@ -95,13 +95,13 @@ if __name__=="__main__":
             continue
         
         # Rest of processing
-        nfiles += 1
         thefile = s.attachments[-1]
         
         nb_file = f"u{s.user_id}_{user_name.replace(' ','_')}.ipynb"
         outname = f"{assignment_dir}/{nb_file}"
         
         if is_new_submission(s, outname):
+            nfiles += 1
             print(f"Downloading: {outname}")
             thefile.download(outname)
             do_lb_stuff(outname)
