@@ -23,16 +23,21 @@ API_KEY = None
 
 
 def do_lb_stuff(nb_filename:str, # notebook file
+                submission_obj, # canvas submission object
                 lb_dir=".", # place where leaderboard executables and csv's are
                 ):
     """run all the leaderboard stuff
     only executes once the notebook has been downloaded"""
 
     # convert to python
-    cmd = f'jupytext --to py {nb_filename}'
-    print(f"Converting to Python: {cmd}")
-    run_cmd(cmd)
-    py_filename = nb_filename.replace('ipynb','py')
+    if nb_filename.endswith('.ipynb'):
+        cmd = f'jupytext --to py {nb_filename}'
+        print(f"Converting to Python: {cmd}")
+        run_cmd(cmd)
+        py_filename = nb_filename.replace('ipynb','py')
+    else:
+        py_filename = nb_filename
+        print(f"Using Python file directly: {py_filename}")
 
     print("Running leaderboard evaluation...")
 
@@ -45,12 +50,17 @@ def do_lb_stuff(nb_filename:str, # notebook file
         # Get absolute path to submission since we changed dirs
         abs_py_path = os.path.abspath(os.path.join(save_cwd, py_filename))
         
-        run_cmd(f"python evaluate_submission.py --submission {abs_py_path}")
+        eval_output = run_cmd(f"python evaluate_submission.py --submission {abs_py_path}")
+        feedback = f"Evaluation Results:\n\n{eval_output}\n\nCheck the leaderboard for your ranking!"
+        #submission_obj.upload_comment(feedback)
+        submission_obj.edit(comment={'text_comment': feedback})
+        print("Feedback sent to student!")
+        
         run_cmd(f"python generate_leaderboard.py")
         run_cmd(f"git add leaderboard.csv")
         run_cmd(f"git commit -m 'Update leaderboard with new submission'")
         run_cmd(f"git push")
-        
+
         print("Leaderboard updated successfully!")
         return True
         
@@ -104,7 +114,7 @@ if __name__=="__main__":
             nfiles += 1
             print(f"Downloading: {outname}")
             thefile.download(outname)
-            do_lb_stuff(outname)
+            do_lb_stuff(outname, s)
         else:
             print(f"Already have latest version")
 
