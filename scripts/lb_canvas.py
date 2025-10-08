@@ -22,7 +22,7 @@ API_KEY = None
 
 
 
-def do_lb_stuff(nb_filename:str, # notebook file
+def do_lb_stuff(local_sub_filename:str, # notebook file
                 submission_obj, # canvas submission object
                 lb_dir=".", # place where leaderboard executables and csv's are
                 ):
@@ -30,15 +30,17 @@ def do_lb_stuff(nb_filename:str, # notebook file
     only executes once the notebook has been downloaded"""
 
     # convert to python
-    if nb_filename.endswith('.ipynb'):
-        cmd = f'jupytext --to py {nb_filename}'
+    if local_sub_filename.endswith('.ipynb'):
+        cmd = f'jupytext --to py {local_sub_filename}'
         print(f"Converting to Python: {cmd}")
         run_cmd(cmd)
-        py_filename = nb_filename.replace('ipynb','py')
-    else:
-        py_filename = nb_filename
+        py_filename = local_sub_filename.replace('ipynb','py')
+    elif local_sub_filename.endswith('.py'):
+        py_filename = local_sub_filename
         print(f"Using Python file directly: {py_filename}")
-
+    else: 
+        raise ValueError(f"Unsupported file extention: {local_sub_filename}. Must be .ipynb or .py")
+    
     print("Running leaderboard evaluation...")
 
     # Save current directory and switch to lb_dir
@@ -107,8 +109,12 @@ if __name__=="__main__":
         # Rest of processing
         thefile = s.attachments[-1]
         
-        nb_file = f"u{s.user_id}_{user_name.replace(' ','_')}.ipynb"
-        outname = f"{assignment_dir}/{nb_file}"
+        # nb_file = f"u{s.user_id}_{user_name.replace(' ','_')}.ipynb"
+        # outname = f"{assignment_dir}/{nb_file}"
+        original_filename = thefile.filename
+        file_ext = os.path.splitext(original_filename)[1]  # .ipynb or .py
+        local_sub_filename = f"u{s.user_id}_{user_name.replace(' ','_')}{file_ext}"
+        outname = f"{assignment_dir}/{local_sub_filename}"
         
         if is_new_submission(s, outname):
             nfiles += 1
