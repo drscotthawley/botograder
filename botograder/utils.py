@@ -33,24 +33,33 @@ def clean_user_str(s:str):
     return s
 
 
-def run_cmd(cmd, log=False, restricted=True, stream=True):
+def run_cmd(cmd, log=False, restricted=True, stream=True, timeout=None):
     "wrapper for running a unix shell command"
     if log: print("    cmd = ",cmd)
     
     if stream:
-        # Stream output in real-time
         import subprocess
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, 
                                    stderr=subprocess.STDOUT, text=True)
         output = []
-        for line in process.stdout:
-            print(line, end='')  # print as it comes
-            output.append(line)
-        process.wait()
-        return ''.join(output)
+        try:
+            for line in process.stdout:
+                print(line, end='')
+                output.append(line)
+            process.wait(timeout=timeout)
+            return ''.join(output)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            output.append(f"\n❌ Process timed out after {timeout} seconds\n")
+            return ''.join(output)
     else:
-        return subprocess.getoutput(cmd)
-    
+        try:
+            result = subprocess.run(cmd, shell=True, capture_output=True, 
+                                  text=True, timeout=timeout)
+            return result.stdout + result.stderr
+        except subprocess.TimeoutExpired:
+            return f"❌ Process timed out after {timeout} seconds"
+           
 
 def wait_til_file_ready(dst_file, sleep=1):
     "sometimes it takes a little while for a local file to be created from (gdrive) download"

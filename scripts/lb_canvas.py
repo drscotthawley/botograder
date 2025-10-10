@@ -25,6 +25,7 @@ API_KEY = None
 def do_lb_stuff(local_sub_filename:str, # notebook file
                 submission_obj, # canvas submission object
                 lb_dir=".", # place where leaderboard executables and csv's are
+                timeout=90, # seconds to execute eval script
                 ):
     """run all the leaderboard stuff
     only executes once the notebook has been downloaded"""
@@ -52,7 +53,7 @@ def do_lb_stuff(local_sub_filename:str, # notebook file
         # Get absolute path to submission since we changed dirs
         abs_py_path = os.path.abspath(os.path.join(save_cwd, py_filename))
         
-        eval_output = run_cmd(f"python evaluate_submission.py --submission {abs_py_path}")
+        eval_output = run_cmd(f"python evaluate_submission.py --submission {abs_py_path}", timeout=timeout)
         feedback = f"Evaluation Results:\n\n{eval_output}\n\nCheck the leaderboard for your ranking!"
         #submission_obj.upload_comment(feedback)
         submission_obj.edit(comment={'text_comment': feedback})
