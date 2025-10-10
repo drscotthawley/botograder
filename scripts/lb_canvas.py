@@ -25,7 +25,7 @@ API_KEY = None
 def do_lb_stuff(local_sub_filename:str, # notebook file
                 submission_obj, # canvas submission object
                 lb_dir=".", # place where leaderboard executables and csv's are
-                timeout=90, # seconds to execute eval script
+                timeout=120, # seconds to execute eval script
                 ):
     """run all the leaderboard stuff
     only executes once the notebook has been downloaded"""
